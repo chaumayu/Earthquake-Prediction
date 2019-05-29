@@ -67,17 +67,26 @@ def main():
         score = mean_absolute_error(test_labels, y_pred_test)
         scores.append(score)
 
-        y_pred = cat_model.predict(test)
+        y_pred = cat_model.predict(test_scaled)
         prediction += y_pred
 
     print "MAE ===>", scores
     print "Mean MAE ===>", np.mean(np.asarray(scores))
+    print prediction
 
     prediction /= n_fold
 
+    # cat_model = CatBoostRegressor(iterations=20000, learning_rate = 0.01,
+    #                             loss_function='MAE', eval_metric='MAE',
+    #                             random_state=0, early_stopping_rounds=200)
+    #
+    # cat_model.fit(X_train_scaled, y_train)
+    #
+    # y_pred_test = cat_model.predict(test_scaled)
+    #
     submission = pd.read_csv('Data/sample_submission.csv', index_col='seg_id')
     submission['time_to_failure'] = prediction
-    submission.to_csv('Results/submission-cat24.csv')
+    submission.to_csv('Results/submission-cat24_2.csv')
 
 if __name__ == '__main__':
     main()
@@ -87,5 +96,6 @@ if __name__ == '__main__':
 CatBoostRegressor(iterations=20000, learning_rate = 0.01,
                         loss_function='MAE', eval_metric='MAE', use_best_model=True,
                         random_state=0, early_stopping_rounds=200)
+MAE ===> [2.31787143016282, 2.3712287184486986, 2.4738987633044096, 1.537743151164778, 2.547945955576579]
 Mean MAE ===> 2.249960277113364
 '''
